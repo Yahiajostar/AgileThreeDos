@@ -181,21 +181,58 @@ class TaskController extends Controller
     ], 200);
 }
 
-public function update(Request $request, $sprint_id, $task_id)
+public function updateStatus(Request $request, $sprint_id, $task_id)
 {
     $task = Task::where('sprint_id', $sprint_id)
                 ->where('id', $task_id)
                 ->first();
 
     if (!$task) {
-        return response()->json(['message' => 'Task not found'], 404);
+        return response()->json([
+            'message' => 'Task not found'
+        ], 404);
     }
-    if ($request->user()->role !== 'admin') {
-    return response()->json(['error' => 'Unauthorized. Only admins can update tasks.'], 403);
-}
+    if ($request->user()->id != $task->assigned_to) {
+        return response()->json([
+            'error' => 'Unauthorized. You can only update your own tasks.'
+        ], 403);
+    }
 
     $validated = $request->validate([
-        'status' => 'sometimes|in:pending,in_progress,completed',
+        'status' => 'required|in:in_progress,completed',
+    ]);
+
+    $task->update([
+        'status' => $validated['status']
+    ]);
+
+    Cache::forget("task_{$sprint_id}_{$task_id}");
+    Cache::forget("tasks_sprint_{$sprint_id}");
+
+    return response()->json([
+        'message' => 'Task status updated successfully.',
+        'task' => $task
+    ], 200);
+}
+ public function updateTask(Request $request, $sprint_id, $task_id)
+{
+    $task = Task::where('sprint_id', $sprint_id)
+                ->where('id', $task_id)
+                ->first();
+
+    if (!$task) {
+        return response()->json([
+            'message' => 'Task not found'
+        ], 404);
+    }
+
+    if ($request->user()->role !== 'admin') {
+        return response()->json([
+            'error' => 'Unauthorized. Only admins can update tasks.'
+        ], 403);
+    }
+
+    $validated = $request->validate([
         'title' => 'sometimes|string',
         'description' => 'sometimes|string',
         'due_date' => 'sometimes|date',
@@ -210,5 +247,5 @@ public function update(Request $request, $sprint_id, $task_id)
         'message' => 'Task updated successfully.',
         'task' => $task
     ], 200);
-}
+}   
 }
