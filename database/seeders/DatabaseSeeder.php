@@ -56,5 +56,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('Test data seeded successfully!');
+$this->call(RoleSeeder::class);
     }
 }
