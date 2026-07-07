@@ -204,6 +204,7 @@ public function update(Request $request, $sprint_id, $task_id)
     $task->update($validated);
 
     Cache::forget("task_{$sprint_id}_{$task_id}");
+    Cache::forget("tasks_sprint_{$sprint_id}");
 
     return response()->json([
         'message' => 'Task updated successfully.',
