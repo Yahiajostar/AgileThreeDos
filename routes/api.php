@@ -54,8 +54,9 @@ Route::get('/reset-password/{token}', function (Request $request, string $token)
     ]);
 })->name('password.reset');
 
+// Route::middleware('auth:api')->group(function ()) {
 
-Route::middleware(['auth:api', 'user'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     
     Route::get('/sprints/{sprint_id}/tasks', [TaskController::class, 'index']);
     Route::post('/sprints/{sprint_id}/tasks', [TaskController::class, 'store']);

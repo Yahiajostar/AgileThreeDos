@@ -183,6 +183,19 @@ class TaskController extends Controller
 
 public function update(Request $request, $sprint_id, $task_id)
 {
+      $validated = $request->validate([
+        'status' => 'sometimes|in:pending,in_progress,completed',
+        'title' => 'sometimes|string',
+        'description' => 'sometimes|string',
+        'due_date' => 'sometimes|date',
+    ]);
+     
+    // if (!auth()->user() || auth()->user()->role !== 'admin') {
+    //     return response()->json(['error' => 'Unauthorized. Only admins can update tasks.'], 403);
+    // }
+    if ($request->user()->role !== 'admin') {
+    return response()->json(['error' => 'Unauthorized. Only admins can update tasks.'], 403);
+}
     $task = Task::where('sprint_id', $sprint_id)
                 ->where('id', $task_id)
                 ->first();
@@ -190,16 +203,18 @@ public function update(Request $request, $sprint_id, $task_id)
     if (!$task) {
         return response()->json(['message' => 'Task not found'], 404);
     }
-    if ($request->user()->role !== 'admin') {
-    return response()->json(['error' => 'Unauthorized. Only admins can update tasks.'], 403);
-}
+    
 
-    $validated = $request->validate([
-        'status' => 'sometimes|in:pending,in_progress,completed',
-        'title' => 'sometimes|string',
-        'description' => 'sometimes|string',
-        'due_date' => 'sometimes|date',
-    ]);
+    // if (!auth()->user() || auth()->user()->role !== 'admin') {
+    //     return response()->json(['error' => 'Unauthorized. Only admins can update tasks.'], 403);
+    // }
+
+    // $validated = $request->validate([
+    //     'status' => 'sometimes|in:pending,in_progress,completed',
+    //     'title' => 'sometimes|string',
+    //     'description' => 'sometimes|string',
+    //     'due_date' => 'sometimes|date',
+    // ]);
 
     $task->update($validated);
 
