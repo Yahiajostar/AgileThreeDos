@@ -154,4 +154,57 @@ class TaskController extends Controller
             'message' => 'Task deleted successfully.'
         ], 200);
     }
+     public function show(Request $request, $sprint_id, $task_id)
+{
+    $task = Cache::remember("task_{$sprint_id}_{$task_id}", 600, function () use ($sprint_id, $task_id) {
+        return Task::where('sprint_id', $sprint_id)
+                    ->where('id', $task_id)
+                    ->with('assignedUser')
+                    ->first();
+    });
+
+    if (!$task) {
+        return response()->json(['message' => 'Task not found'], 404);
+    }
+
+    return response()->json([
+        'id' => $task->id,
+        'sprint_id' => $task->sprint_id,
+        'title' => $task->title,
+        'description' => $task->description,
+        'due_date' => $task->due_date,
+        'status' => $task->status,
+        'assigned_to' => $task->assignedUser ? [
+            'id' => $task->assignedUser->id,
+            'name' => $task->assignedUser->name
+        ] : null
+    ], 200);
+}
+
+public function update(Request $request, $sprint_id, $task_id)
+{
+    $task = Task::where('sprint_id', $sprint_id)
+                ->where('id', $task_id)
+                ->first();
+
+    if (!$task) {
+        return response()->json(['message' => 'Task not found'], 404);
+    }
+
+    $validated = $request->validate([
+        'status' => 'sometimes|in:pending,in_progress,completed',
+        'title' => 'sometimes|string',
+        'description' => 'sometimes|string',
+        'due_date' => 'sometimes|date',
+    ]);
+
+    $task->update($validated);
+
+    Cache::forget("task_{$sprint_id}_{$task_id}");
+
+    return response()->json([
+        'message' => 'Task updated successfully.',
+        'task' => $task
+    ], 200);
+}
 }
