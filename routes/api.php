@@ -4,9 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SprintController;
 
-Route::middleware(['auth:api','user'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
 Route::resource('/projects', ProjectController::class);
+Route::resource('sprints', SprintController::class)->only(['index']);
 });
 
 
