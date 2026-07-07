@@ -190,6 +190,9 @@ public function update(Request $request, $sprint_id, $task_id)
     if (!$task) {
         return response()->json(['message' => 'Task not found'], 404);
     }
+    if ($request->user()->role !== 'admin') {
+    return response()->json(['error' => 'Unauthorized. Only admins can update tasks.'], 403);
+}
 
     $validated = $request->validate([
         'status' => 'sometimes|in:pending,in_progress,completed',
