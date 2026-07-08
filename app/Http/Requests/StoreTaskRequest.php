@@ -10,11 +10,25 @@ class StoreTaskRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+    // public function authorize(): bool
+    // {
+    //     return auth()->check() && auth()->user()->role === 'admin';
+    // }
     public function authorize(): bool
-    {
-        return auth()->check() && auth()->user()->role === 'admin';
+{
+    if (!auth('api')->check() || auth('api')->user()->role !== 'admin') {
+        return false;
     }
 
+    $sprintId = $this->route('sprint') ?? $this->route('sprint_id') ?? $this->input('sprint_id');
+    $sprint = \App\Models\Sprint::with('project')->find($sprintId);
+
+    if (!$sprint || !$sprint->project) {
+        return false;
+    }
+
+    return (int) $sprint->project->user_id === (int) auth('api')->id();
+}
     /**
      * Get the validation rules that apply to the request.
      *

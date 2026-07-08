@@ -18,7 +18,7 @@ return new class extends Migration
             //$table->timestamp('email_verified_at')->nullable();
             $table->string('password');
          $table->string('plan')->default('free'); 
-        $table->enum('role', ['admin', 'user'])->default('user');
+         $table->enum('role', ['admin', 'user'])->default('user');
             $table->rememberToken();
             $table->boolean('plan')->default(false);
             $table->enum('role', ['admin','user'])->default('user');
