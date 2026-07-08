@@ -51,7 +51,7 @@ public function show(Request $request, $id){
 }
 
 public function destroy(Request $request, $id){
-    if ($request->user()->role !== 'admin'){
+    if ($request->user()->role !== 'core admin'){
         return response()->json([
             'error' => 'Unauthorized. Only admins can delete users.'
         ], 403);
@@ -86,7 +86,7 @@ public function updateRole(Request $request){
         'role' => $validated['role']
     ]);
 
-    if ($validated['role'] === 'team_leader'){
+    if ($validated['role'] === 'admin'){
         return response()->json([
             'message' => 'Role updated successfully.',
             'next_step' => 'SELECT_PLAN'
@@ -105,7 +105,7 @@ public function updatePlan(Request $request){
 
     $user = auth('api')->user();
 
-    if ($user->role !== 'team_leader'){
+    if ($user->role !== 'admin'){
         return response()->json([
             'error' => 'Only team leaders can select a subscription plan.'
         ], 403);
