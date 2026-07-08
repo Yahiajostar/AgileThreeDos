@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectMemberController;
 Route::post('/register', [AuthController::class, 'register']);
@@ -64,7 +65,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/sprints/{sprint_id}/tasks/{task_id}', [TaskController::class, 'updateTask']);
     Route::patch('/sprints/{sprint_id}/tasks/{task_id}/status', [TaskController::class, 'updateStatus']);
     Route::delete('/tasks/{task_id}', [TaskController::class, 'destroy']);
-    
+    Route::get('/admin/users', [UserController::class, 'index']);
+    Route::get('/admin/users/{id}', [UserController::class, 'show']);
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
+    Route::patch('/users/me/role', [UserController::class, 'updateRole']);
+    Route::patch('/users/me/plan', [UserController::class, 'updatePlan']);
     Route::resource('/projects', ProjectController::class);
     
     Route::post('/logout', [AuthController::class, 'logout']);
