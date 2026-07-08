@@ -41,7 +41,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\ProjectMemberController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgetPassword']);
@@ -70,4 +70,17 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user', [AuthController::class, 'me']);
+});
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/projects', [ProjectController::class, 'store']);
+    Route::get('/projects', [ProjectController::class, 'index']);
+    Route::get('/projects/{project_id}', [ProjectController::class, 'show']);
+    Route::put('/projects/{project_id}', [ProjectController::class, 'update']);
+    Route::delete('/projects/{project_id}', [ProjectController::class, 'destroy']);
+
+    Route::post('/projects/{project_id}/members', [ProjectMemberController::class, 'addMember']);
+    Route::delete('/projects/{project_id}/members/{user_id}', [ProjectMemberController::class, 'removeMember']);
+    Route::get('/projects/{project_id}/members', [ProjectMemberController::class, 'getMembers']);
 });
