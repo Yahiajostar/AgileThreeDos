@@ -7,8 +7,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -18,6 +19,18 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    public function getJWTIdentifier(){
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(){
+    return [
+         'role' => $this->role
+    ];
+}
+
+
     protected $fillable = [
         'name',
         'email',
@@ -31,7 +44,10 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'id',
         'remember_token',
+        'created_at',
+        'updated_at'
     ];
 
     /**
