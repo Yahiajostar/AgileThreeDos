@@ -70,4 +70,14 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user', [AuthController::class, 'me']);
+
+});
+Route::middleware(['auth:sanctum', 'sprint.auth'])->group(function () {
+    Route::get('projects/{project}/sprints', [SprintController::class, 'index'])->name('sprints.index');
+    Route::post('sprints', [SprintController::class, 'store'])->name('sprints.store');
+    Route::get('sprints/{sprint}', [SprintController::class, 'show'])->name('sprints.show');
+    Route::put('sprints/{sprint}', [SprintController::class, 'update'])->name('sprints.update');
+    Route::delete('sprints/{sprint}', [SprintController::class, 'destroy'])->name('sprints.destroy');
+    Route::patch('sprints/{sprint}/status', [SprintController::class, 'updateStatus'])->name('sprints.status');
+    Route::get('sprints/{sprint}/progress', [SprintController::class, 'progress'])->name('sprints.progress');
 });
