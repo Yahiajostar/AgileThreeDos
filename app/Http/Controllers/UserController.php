@@ -50,34 +50,20 @@ public function show(Request $request, $id){
     return response()->json($user, 200);
 }
 
-public function destroy(Request $request, $id){
-    if ($request->user()->role !== 'core admin'){
-        return response()->json([
-            'error' => 'Unauthorized. Only admins can delete users.'
-        ], 403);
-    }
-
-    $user = User::find($id);
-
-    if (!$user){
-        return response()->json([
-            'message' => 'User not found'
-        ], 404);
-    }
-
+public function destroy(Request $request){
+    $user = $request->user();
+    Cache::forget("user_{$user->id}");
     $user->delete();
-
-    Cache::forget("user_$id");
     Cache::flush();
 
     return response()->json([
-        'message' => 'User deleted successfully.'
+        'message' => 'Account deleted successfully.'
     ], 200);
 }
 
 public function updateRole(Request $request){
     $validated = $request->validate([
-        'role' => 'required|in:team_leader,team_member',
+        'role' => 'required|in:admin,user',
     ]);
 
     $user = auth('api')->user();

@@ -42,6 +42,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectMemberController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -58,7 +59,7 @@ Route::get('/reset-password/{token}', function (Request $request, string $token)
 // Route::middleware('auth:api')->group(function ()) {
 
 Route::middleware(['auth:api'])->group(function () {
-    
+
     Route::get('/sprints/{sprint_id}/tasks', [TaskController::class, 'index']);
     Route::post('/sprints/{sprint_id}/tasks', [TaskController::class, 'store']);
     Route::get('/sprints/{sprint_id}/tasks/{task_id}', [TaskController::class, 'show']);
@@ -67,11 +68,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/tasks/{task_id}', [TaskController::class, 'destroy']);
     Route::get('/admin/users', [UserController::class, 'index']);
     Route::get('/admin/users/{id}', [UserController::class, 'show']);
-    Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
+    Route::delete('/users/me', [UserController::class, 'destroy']);
     Route::patch('/users/me/role', [UserController::class, 'updateRole']);
     Route::patch('/users/me/plan', [UserController::class, 'updatePlan']);
     Route::resource('/projects', ProjectController::class);
-    
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user', [AuthController::class, 'me']);
@@ -88,4 +89,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/projects/{project_id}/members', [ProjectMemberController::class, 'addMember']);
     Route::delete('/projects/{project_id}/members/{user_id}', [ProjectMemberController::class, 'removeMember']);
     Route::get('/projects/{project_id}/members', [ProjectMemberController::class, 'getMembers']);
+    Route::get('/tasks/{taskId}/comments', [CommentController::class, 'index']);
+    Route::post('/comments', [CommentController::class, 'store']);
+    Route::put('/comments/{id}', [CommentController::class, 'update']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });
