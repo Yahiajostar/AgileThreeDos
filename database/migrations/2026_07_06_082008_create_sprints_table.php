@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('status');
+            $table->enum('status',['completed','in progress','overdue'])->default('in progress');
             $table->date('start_date');
             $table->date('end_date');
             $table->foreignId('project_id')->constrained()->onDelete('cascade');

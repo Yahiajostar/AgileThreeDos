@@ -44,6 +44,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectMemberController;
+use App\Http\Controllers\SprintController;
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgetPassword']);
@@ -93,4 +95,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/comments', [CommentController::class, 'store']);
     Route::put('/comments/{id}', [CommentController::class, 'update']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+     Route::post('sprints', [SprintController::class, 'store'])->name('sprints.store');
+    Route::get('sprints/{sprint}', [SprintController::class, 'show'])->name('sprints.show');
+    Route::put('sprints/{sprint}', [SprintController::class, 'update'])->name('sprints.update');
+    Route::delete('sprints/{sprint}', [SprintController::class, 'destroy'])->name('sprints.destroy');
+    Route::patch('sprints/{sprint}/status', [SprintController::class, 'updateStatus'])->name('sprints.status');
+    Route::get('sprints/{sprint}/progress', [SprintController::class, 'progress'])->name('sprints.progress');
 });
